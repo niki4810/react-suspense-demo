@@ -1,3 +1,5 @@
+A sample exmaple suspense demo app created from the learnings and examples found from Kent C Dodds egghead course. 
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
