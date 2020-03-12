@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useTransition } from 'react';
 import './App.css';
 import ErrorBoundary from './ErrorBoundary';
 // #region Utils Region
@@ -38,7 +38,7 @@ let githubResourceCache = {};
 
 function getGithubResource(userName) {
   let githubResource = githubResourceCache[userName];
-  if(!githubResource) {
+  if (!githubResource) {
     githubResource = createResource(() => fetchJson(`https://api.github.com/users/${userName}`));
     githubResourceCache[userName] = githubResource;
   }
@@ -47,7 +47,7 @@ function getGithubResource(userName) {
 // #endregion
 
 // #region Dumb Components
-function SearchBox({onSearchClick = () => {}}) {
+function SearchBox({ onSearchClick = () => { } }) {
   const [userName, setUserName] = useState('');
 
   function handleChange(ev) {
@@ -82,24 +82,34 @@ function UserDetails({ githubResource }) {
 }
 // #endregion Dumb Components
 
+const SUSPENSE_CONFIG = {
+  timeoutMs: 4000,
+  busyDelayMs: 300,
+  busyMinDurationMs: 700
+};
 
 function App() {
   const [userName, setUserName] = useState('');
+  const [startTransition, isPending] = useTransition(SUSPENSE_CONFIG);
   const [githubResource, setGithubResource] = React.useState(null);
 
   const onSearchClick = (newUserName) => {
     setUserName(newUserName);
-    setGithubResource(getGithubResource(newUserName));
+    startTransition(() => {
+      setGithubResource(getGithubResource(newUserName));
+    });
   }
 
   return (
     <div className="App">
       <SearchBox onSearchClick={onSearchClick} />
-      {githubResource && <ErrorBoundary>
-        <React.Suspense fallback={<div>Loading details for {userName}...</div>}>
-          <UserDetails githubResource={githubResource} />
-        </React.Suspense>
-      </ErrorBoundary>}
+      <div className={`details-container ${isPending ? 'details-loading' : ''}`}>
+        {githubResource && <ErrorBoundary>
+          <React.Suspense fallback={<div>Loading details for {userName}...</div>}>
+            <UserDetails githubResource={githubResource} />
+          </React.Suspense>
+        </ErrorBoundary>}
+      </div>
     </div>
   );
 }

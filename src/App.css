@@ -50,3 +50,7 @@
   list-style: none;
   text-align: left;
 }
+
+.details-loading {
+  opacity: 0.4;
+}
