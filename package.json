@@ -8,7 +8,7 @@
     "@testing-library/user-event": "^7.1.2",
     "react": "0.0.0-experimental-8b155d261",
     "react-dom": "0.0.0-experimental-8b155d261",
-    "react-scripts": "3.4.0"
+    "react-scripts": "5.0.1"
   },
   "scripts": {
     "start": "react-scripts start",
